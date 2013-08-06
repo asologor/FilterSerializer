@@ -8,7 +8,7 @@ define ['FilterSerializer'], (FilterSerializer) ->
       'pools': 'pools names'
       'hosts': 'hosts names'
       'step-limit': 10
-      'proxy-agent': 'no'
+      'proxy-agent': ''
 
     start: ->
 
