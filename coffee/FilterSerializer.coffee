@@ -464,7 +464,7 @@ define ['underscore'], (_) ->
         filterCollection.push stepLimitFilter
 
       pa = filters['proxy-agent']
-      if pa isnt 'no' and pa isnt 0 and pa isnt false
+      if pa? (pa isnt 'no' and pa isnt 0 and pa isnt false)
         if pa is 'true' or pa is 'yes' or pa is 1
           proxyFilter = new NotEqualFilter @PROXYHOSTNAME, ''
         else

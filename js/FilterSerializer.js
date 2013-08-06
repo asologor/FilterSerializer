@@ -572,7 +572,7 @@ define(['underscore'], function(_) {
         filterCollection.push(stepLimitFilter);
       }
       pa = filters['proxy-agent'];
-      if (pa !== 'no' && pa !== 0 && pa !== false) {
+      if (typeof pa === "function" ? pa(pa !== 'no' && pa !== 0 && pa !== false) : void 0) {
         if (pa === 'true' || pa === 'yes' || pa === 1) {
           proxyFilter = new NotEqualFilter(this.PROXYHOSTNAME, '');
         } else {
