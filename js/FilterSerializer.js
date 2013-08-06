@@ -544,7 +544,7 @@ define(['underscore'], function(_) {
     FilterSerializer.serialize = function(filters) {
       var down, filterCollection, hostFilter, isEnabledFilter, pa, poolsFilter, proxyFilter, serialized, stepLimitFilter, up;
       filterCollection = new Array();
-      if (filters['search'] != null) {
+      if ((filters['search'] != null) && (filters['search'].length > 0)) {
         filterCollection.push(new EqualsFilter(this.QUICKSEARCH, filters['search']));
       }
       down = filters['status-down'];
@@ -559,21 +559,21 @@ define(['underscore'], function(_) {
         isEnabledFilter = new EqualsFilter(this.RESOURCEDISABLED, filters['status']);
         filterCollection.push(isEnabledFilter);
       }
-      if (filters['pools'] != null) {
+      if ((filters['pools'] != null) && (filters['pools'].length > 0)) {
         poolsFilter = new ContainsFilter(this.POOLS, filters['pools']);
         filterCollection.push(poolsFilter);
       }
-      if (filters['hosts'] != null) {
+      if ((filters['hosts'] != null) && (filters['hosts'].length > 0)) {
         hostFilter = new EqualsFilter(this.HOSTNAME, filters['hosts']);
         filterCollection.push(hostFilter);
       }
-      if (filters['step-limit'] != null) {
+      if ((filters['step-limit'] != null) && (filters['step-limit'].length > 0)) {
         stepLimitFilter = new GreaterThanFilter(this.STEPLIMIT, filters['step-limit']);
         filterCollection.push(stepLimitFilter);
       }
       pa = filters['proxy-agent'];
-      if (typeof pa === "function" ? pa(pa !== 'no' && pa !== 0 && pa !== false) : void 0) {
-        if (pa === 'true' || pa === 'yes' || pa === 1) {
+      if ((pa != null) && (pa.length > 0)) {
+        if (pa === '1') {
           proxyFilter = new NotEqualFilter(this.PROXYHOSTNAME, '');
         } else {
           proxyFilter = new EqualsFilter(this.PROXYHOSTNAME, '');
@@ -592,8 +592,8 @@ define(['underscore'], function(_) {
         'status': '',
         'pools': '',
         'hosts': '',
-        'step-limit': 0,
-        'proxy-agent': 0
+        'step-limit': '0',
+        'proxy-agent': '0'
       };
       deserialized = new Array();
       FindObjectsFilterSerializer.deserialize(serialized, deserialized);
@@ -625,7 +625,9 @@ define(['underscore'], function(_) {
             break;
           case this.PROXYHOSTNAME:
             if ((d.getStringParameter('operator')) === 'notEqual') {
-              decoded['proxy-agent'] = 1;
+              decoded['proxy-agent'] = '1';
+            } else if ((d.getStringParameter('operator')) === 'equals') {
+              decoded['proxy-agent'] = '0';
             }
             break;
           case this.HOSTNAME:
