@@ -435,7 +435,7 @@ define ['underscore'], (_) ->
 
     @serialize: (filters) ->
       filterCollection = new Array()
-      if filters['search']?
+      if filters['search']? and (filters['search'].length > 0)
         filterCollection.push new EqualsFilter(@QUICKSEARCH, filters['search'])
 
       down = filters['status-down']
@@ -451,21 +451,21 @@ define ['underscore'], (_) ->
         isEnabledFilter = new EqualsFilter @RESOURCEDISABLED, filters['status']
         filterCollection.push isEnabledFilter
 
-      if filters['pools']?
+      if filters['pools']? and (filters['pools'].length > 0)
         poolsFilter = new ContainsFilter @POOLS, filters['pools']
         filterCollection.push poolsFilter
 
-      if filters['hosts']?
+      if filters['hosts']? and (filters['hosts'].length > 0)
         hostFilter = new EqualsFilter @HOSTNAME, filters['hosts']
         filterCollection.push hostFilter
 
-      if filters['step-limit']?
+      if filters['step-limit']? and (filters['step-limit'].length > 0)
         stepLimitFilter = new GreaterThanFilter @STEPLIMIT, filters['step-limit']
         filterCollection.push stepLimitFilter
 
       pa = filters['proxy-agent']
-      if pa? (pa isnt 'no' and pa isnt 0 and pa isnt false)
-        if pa is 'true' or pa is 'yes' or pa is 1
+      if pa? and (pa.length > 0)
+        if pa is '1'
           proxyFilter = new NotEqualFilter @PROXYHOSTNAME, ''
         else
           proxyFilter = new EqualsFilter @PROXYHOSTNAME, ''
@@ -481,8 +481,8 @@ define ['underscore'], (_) ->
         'status': ''
         'pools': ''
         'hosts': ''
-        'step-limit': 0
-        'proxy-agent': 0
+        'step-limit': '0'
+        'proxy-agent': '0'
       }
       deserialized = new Array()
       FindObjectsFilterSerializer.deserialize serialized, deserialized
@@ -514,7 +514,9 @@ define ['underscore'], (_) ->
             break
           when @PROXYHOSTNAME
             if (d.getStringParameter 'operator') is 'notEqual'
-              decoded['proxy-agent'] = 1
+              decoded['proxy-agent'] = '1'
+            else if (d.getStringParameter 'operator') is 'equals'
+              decoded['proxy-agent'] = '0'
             break
           when @HOSTNAME
             decoded['hosts'] = d.getStringParameter 'operand1'
